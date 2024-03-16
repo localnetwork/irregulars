@@ -1,0 +1,35 @@
+<html>
+    <head>
+        
+    </head>
+    <body>
+        <div>
+            <input id="search-bar" type="text" placeholder="Search a song." />
+        <iframe id="player" src="https://open.spotify.com/embed/track/1Yk0cQdMLx5RzzFTYwmuld" width="500" height="300">
+        </iframe>
+        <button id="submit" onclick="logSongs()">
+            Search
+        </button>
+        </div>
+
+        <script>
+            const api_url = "https://open.spotify.com/embed/track";
+            const bearer = "BQADp9LghQU-z4ckBc7ceMRzuEj25IzANV0Q87oSFtwpNPbz3Xww7I4TWol97CvChViXlHsrDg5wD1JeQmyGQc6K2wSNrwX0mQbJqCcA_rwXU3gZM6NA24oRMyAJ23Xw8wl2BHfWpOY6GUZvJ2ssRNskG07gPLgfpc3bT22UvVJctlVFU-Ex76i34tX73HYy7narvdE5hncIM9rK-zs"; 
+        
+            const logSongs = async () => {
+                console.log('sss')
+                const searchBar = document.querySelector('#search-bar').value; 
+                // const response = await fetch(`https://api.spotify.com/v1/search?type=track&q=${searchBar}`);
+                let response = await fetch(`https://api.spotify.com/v1/search?type=track&q=${searchBar}`, 
+                    {
+                        method:'GET', 
+                        headers: {'Authorization': `Bearer ${bearer}`}
+                    }
+                );
+                let data = await response.json();
+                const player = document.getElementById("player").getAttribute("src");
+                // player.setAttribute("src")  = data.tracks.items[0].id; 
+            }
+        </script>
+    </body>
+</html>
