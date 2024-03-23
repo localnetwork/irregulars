@@ -1,0 +1,15 @@
+{
+  "name": "irregulars-3c",
+  "version": "1.0.0",
+  "description": "1. Diome Potot\r 2. Aimy Mata\r 3. Ritchie Formoso\r 4. Ruvelyn Bonghanoy\r 5. Margarita Ybañez",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.1"
+  }
+}

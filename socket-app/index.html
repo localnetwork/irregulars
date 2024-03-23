@@ -1,0 +1,128 @@
+<html>
+  <head>
+    <title>SASD</title>
+    <style>
+      body {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      button {
+        border: 1px solid #ddd;
+        background-color: #ddd;
+        color: #333;
+        padding: 5px 15px;
+        cursor: pointer;
+      }
+      input {
+        min-height: 30px;
+        border: 1px solid #ccc;
+      }
+      .hide {
+        display: none;
+      }
+      .form {
+        display: flex;
+        align-items: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <span class="typing hide">Someone is typing....</span>
+      <div class="form">
+        <input
+          type="text"
+          id="message-input"
+          oninput="startTyping()"
+          onblur="stopTyping()"
+        />
+        <button onclick="sendMessage()">Send Message</button>
+      </div>
+
+      <ul id="chat-messages"></ul>
+    </div>
+
+    <script
+      type="text/javascript"
+      src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"
+    ></script>
+
+    <script>
+      const socket = io("http://localhost:3000");
+
+      // Function to emit typing event when user starts typing
+      function startTyping() {
+        console.log("start Typing");
+        socket.emit("typing", true);
+        const typing = document.querySelector(".typing");
+        typing.classList.remove("hide");
+
+        setInterval(() => {
+          const messageInput = document.getElementById("message-input");
+          const message = messageInput.value;
+          if (!message) {
+            typing.classList.add("hide");
+          } else {
+            typing.classList.remove("hide");
+          }
+        }, 1000);
+      }
+
+      function stopTyping() {
+        console.log("stopped typing");
+        socket.emit("typing", false);
+        const typing = document.querySelector(".typing");
+        typing.classList.add("hide");
+      }
+
+      socket.on("typing", function (data) {
+        console.log("is Typing");
+        if (data) {
+          console.log("Someone is typing...");
+          const typing = document.querySelector(".typing");
+          typing.classList.remove("hide");
+        } else {
+          console.log("No one is typing.");
+          const typing = document.querySelector(".typing");
+          typing.classList.add("hide");
+        }
+      });
+      socket.on("message", (message) => {
+        const chatMessages = document.getElementById("chat-messages");
+        const li = document.createElement("li");
+        li.appendChild(document.createTextNode(message));
+        chatMessages.appendChild(li);
+      });
+
+      socket.on("connection", function (socket) {
+        console.log("A user connected");
+
+        // Event listener for typing event from client
+        socket.on("typing", function (isTyping) {
+          // Broadcast typing status to all connected clients except the sender
+          socket.broadcast.emit("typing", isTyping);
+        });
+
+        // Event listener for disconnections
+        socket.on("disconnect", function () {
+          console.log("A user disconnected");
+        });
+      });
+
+      const sendMessage = () => {
+        const messageInput = document.getElementById("message-input");
+        const message = messageInput.value;
+
+        if (message) {
+          socket.emit("message", message);
+        } else {
+          alert("Please enter a message.");
+        }
+
+        messageInput.value = "";
+      };
+    </script>
+  </body>
+</html>
