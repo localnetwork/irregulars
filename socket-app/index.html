@@ -26,20 +26,28 @@
         display: flex;
         align-items: center;
       }
+
+      #chat-messages {
+        display: flex;
+        flex-flow: column;
+        flex-direction: column-reverse;
+        max-height: 300px;
+        overflow-y: auto;
+      }
     </style>
   </head>
   <body>
     <div>
       <span class="typing hide">Someone is typing....</span>
-      <div class="form">
+      <form class="form">
         <input
           type="text"
           id="message-input"
           oninput="startTyping()"
           onblur="stopTyping()"
         />
-        <button onclick="sendMessage()">Send Message</button>
-      </div>
+        <button type="submit">Send Message</button>
+      </form>
 
       <ul id="chat-messages"></ul>
     </div>
@@ -50,7 +58,14 @@
     ></script>
 
     <script>
+      const audioFilePath = "./assets/fb.mp3";
       const socket = io("http://localhost:3000");
+      const form = document.querySelector(".form");
+
+      function playSound() {
+        const audio = new Audio(audioFilePath);
+        audio.play();
+      }
 
       // Function to emit typing event when user starts typing
       function startTyping() {
@@ -111,7 +126,20 @@
         });
       });
 
-      const sendMessage = () => {
+      // const sendMessage = () => {
+      //   const messageInput = document.getElementById("message-input");
+      //   const message = messageInput.value;
+
+      //   if (message) {
+      //     socket.emit("message", message);
+      //   } else {
+      //     alert("Please enter a message.");
+      //   }
+      //   messageInput.value = "";
+      // };
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
         const messageInput = document.getElementById("message-input");
         const message = messageInput.value;
 
@@ -120,9 +148,10 @@
         } else {
           alert("Please enter a message.");
         }
-
         messageInput.value = "";
-      };
+
+        playSound();
+      });
     </script>
   </body>
 </html>
